@@ -38,11 +38,10 @@
         export PATH="$MIX_HOME/bin:$MIX_HOME/escripts:$HEX_HOME/bin:$PATH"
         export ERL_AFLAGS="-kernel shell_history enabled -kernel shell_history_path '\"$PWD/.nix/.erlang-history\"'";
 
+        export MIX_ENV="prod"
         export ELIXIR_LS_PATH="/Users/$USER/.vscode/elixir-ls-release"
 
-        mix deps.get
-        MIX_ENV=prod mix compile
-        MIX_ENV=prod mix elixir_ls.release -o "$ELIXIR_LS_PATH"
+        # Run: nix develop --command bash -c "mix deps.get && mix compile && mix elixir_ls.release -o \$ELIXIR_LS_PATH"
       '';
     };
   });
