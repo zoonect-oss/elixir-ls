@@ -88,6 +88,7 @@ The installation process for ElixirLS depends on your editor.
   ;; Make sure to edit the path appropriately, use the .bat script instead for Windows
   (add-to-list 'eglot-server-programs '(elixir-mode "path-to-elixir-ls/release/language_server.sh"))
   ```
+
 </details>
 
 ## Supported versions
@@ -384,9 +385,9 @@ To ensure that the correct environment is set up, you can create a setup script 
 
 In the setup script the environment variable `ELS_MODE` available and set to either `debugger` or `language_server` to help you decide what to do.
 
-Note: The setup script must not read from `stdin` and write to `stdout` and `stderr`. On unix/linux/macOS
-this might be accomplished by adding `>/dev/null` and/or `2>/dev/null` at the end of any line that produces
-output, and for a windows batch script you will want `@echo off` at the top and `>nul` and/or `2>nul`.
+Note: The setup script must not read from `stdin` and write to `stdout`. On unix/linux/macOS
+this might be accomplished by adding `>/dev/null` at the end of any line that produces
+output, and for a windows batch script you will want `@echo off` at the top and `>nul`.
 
 ## Environment variables
 

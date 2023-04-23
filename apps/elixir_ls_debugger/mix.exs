@@ -1,10 +1,15 @@
 defmodule ElixirLS.Debugger.Mixfile do
   use Mix.Project
 
+  @version __DIR__
+           |> Path.join("../../VERSION")
+           |> File.read!()
+           |> String.trim()
+
   def project do
     [
       app: :elixir_ls_debugger,
-      version: "0.14.0",
+      version: @version,
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -13,6 +18,8 @@ defmodule ElixirLS.Debugger.Mixfile do
       build_embedded: false,
       start_permanent: true,
       build_per_environment: false,
+      # if we consolidate here debugged code will not work correctly
+      # and debugged protocol implementation will not be available
       consolidate_protocols: false,
       deps: deps(),
       xref: [exclude: [:int, :dbg_iserver]]
