@@ -19,7 +19,7 @@ defmodule ElixirLS.LanguageServer.Server do
   require Logger
   alias ElixirLS.LanguageServer.Experimental
   alias ElixirLS.LanguageServer.Server.Decider
-  alias ElixirLS.LanguageServer.{SourceFile, Build, Protocol, JsonRpc, Dialyzer, Diagnostics}
+  alias ElixirLS.LanguageServer.{SourceFile, Build, Protocol, JsonRpc, Dialyzer, Diagnostics, Sequencer}
 
   alias ElixirLS.LanguageServer.Providers.{
     Completion,
@@ -484,6 +484,10 @@ defmodule ElixirLS.LanguageServer.Server do
     |> WorkspaceSymbols.notify_uris_modified()
 
     if needs_build, do: trigger_build(state), else: state
+  rescue
+    error ->
+      Logger.warn("Rescue in ElixirLS.LanguageServer.Server.handle_notification(did_change_watched_files) from error: #{inspect(error)}!")
+      state
   end
 
   defp handle_notification(%{"method" => "$/" <> _}, state = %__MODULE__{}) do
@@ -705,8 +709,9 @@ defmodule ElixirLS.LanguageServer.Server do
     signature_help_supported =
       !!get_in(state.client_capabilities, ["textDocument", "signatureHelp"])
 
+    Logger.info("Calling ElixirLS.LanguageServer.Sequencer.formatter_for(uri) from ElixirLS.LanguageServer.Server.handle_requeste(completion_req)")
     locals_without_parens =
-      case SourceFile.formatter_for(uri) do
+      case Sequencer.formatter_for(uri) do
         {:ok, {_, opts}} -> Keyword.get(opts, :locals_without_parens, [])
         :error -> []
       end
@@ -1352,7 +1357,8 @@ defmodule ElixirLS.LanguageServer.Server do
       Logger.info("DETS databases will be rebuilt")
       Tracer.clean_dets(project_dir)
 
-      case Build.reload_project() do
+      Logger.info("Calling ElixirLS.LanguageServer.Sequencer.reload_project() from ElixirLS.LanguageServer.Server.maybe_rebuild(...)")
+      case Sequencer.reload_project() do
         {:ok, _} ->
           Build.clean(true)
 

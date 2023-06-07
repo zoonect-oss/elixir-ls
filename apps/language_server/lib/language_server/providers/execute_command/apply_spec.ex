@@ -4,9 +4,10 @@ defmodule ElixirLS.LanguageServer.Providers.ExecuteCommand.ApplySpec do
   Generates source file edit as a result.
   """
 
-  alias ElixirLS.LanguageServer.{JsonRpc, SourceFile}
+  alias ElixirLS.LanguageServer.{JsonRpc, Sequencer, SourceFile}
   import ElixirLS.LanguageServer.Protocol
   alias ElixirLS.LanguageServer.Server
+  require Logger
 
   @behaviour ElixirLS.LanguageServer.Providers.ExecuteCommand
 
@@ -55,8 +56,9 @@ defmodule ElixirLS.LanguageServer.Providers.ExecuteCommand.ApplySpec do
     # line if anything fails
     formatted =
       try do
+        Logger.info("Calling ElixirLS.LanguageServer.Sequencer.formatter_for(uri) from ElixirLS.LanguageServer.Providers.ExecuteCommand.ApplySpec.execute(...)")
         target_line_length =
-          case SourceFile.formatter_for(uri) do
+          case Sequencer.formatter_for(uri) do
             {:ok, {_, opts}} -> Keyword.get(opts, :line_length, @default_target_line_length)
             :error -> @default_target_line_length
           end

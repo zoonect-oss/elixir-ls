@@ -1,5 +1,5 @@
 defmodule ElixirLS.LanguageServer.Build do
-  alias ElixirLS.LanguageServer.{Server, JsonRpc, Diagnostics, Tracer}
+  alias ElixirLS.LanguageServer.{Server, JsonRpc, Diagnostics, Sequencer, Tracer}
   alias ElixirLS.Utils.MixfileHelpers
   require Logger
 
@@ -17,7 +17,8 @@ defmodule ElixirLS.LanguageServer.Build do
               # read cache before cleaning up mix state in reload_project
               cached_deps = read_cached_deps()
 
-              case reload_project() do
+              Logger.info("Calling ElixirLS.LanguageServer.Sequencer.reload_project() from  ElixirLS.LanguageServer.Build.build(...)")
+              case Sequencer.reload_project() do
                 {:ok, mixfile_diagnostics} ->
                   # FIXME: Private API
 
@@ -72,6 +73,7 @@ defmodule ElixirLS.LanguageServer.Build do
   end
 
   def reload_project do
+    Logger.info("Called ElixirLS.LanguageServer.Build.reload_project()")
     mixfile = Path.absname(MixfileHelpers.mix_exs())
 
     if File.exists?(mixfile) do

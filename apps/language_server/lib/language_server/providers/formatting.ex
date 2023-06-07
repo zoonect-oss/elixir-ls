@@ -1,12 +1,14 @@
 defmodule ElixirLS.LanguageServer.Providers.Formatting do
   import ElixirLS.LanguageServer.Protocol, only: [range: 4]
   alias ElixirLS.LanguageServer.Protocol.TextEdit
-  alias ElixirLS.LanguageServer.SourceFile
+  alias ElixirLS.LanguageServer.{Sequencer, SourceFile}
+  require Logger
 
   def format(%SourceFile{} = source_file, uri = "file:" <> _, project_dir)
       when is_binary(project_dir) do
     if can_format?(uri, project_dir) do
-      case SourceFile.formatter_for(uri) do
+      Logger.info("Calling ElixirLS.LanguageServer.Sequencer.formatter_for(uri) from ElixirLS.LanguageServer.Providers.Formatting.format(...)")
+      case Sequencer.formatter_for(uri) do
         {:ok, {formatter, opts}} ->
           if should_format?(uri, project_dir, opts[:inputs]) do
             do_format(source_file, formatter, opts)

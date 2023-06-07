@@ -17,6 +17,7 @@ defmodule ElixirLS.LanguageServer do
         {ElixirLS.LanguageServer.Server, ElixirLS.LanguageServer.Server},
         maybe_packet_router(),
         jsonrpc(),
+        {ElixirLS.LanguageServer.Sequencer, ElixirLS.LanguageServer.Sequencer},
         {ElixirLS.LanguageServer.Providers.WorkspaceSymbols, []},
         {ElixirLS.LanguageServer.Tracer, []},
         {ElixirLS.LanguageServer.ExUnitTestTracer, []}

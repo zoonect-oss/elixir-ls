@@ -2,6 +2,7 @@ defmodule ElixirLS.LanguageServer.Experimental.CodeMod.Format do
   alias ElixirLS.LanguageServer.Experimental.CodeMod.Diff
   alias ElixirLS.LanguageServer.Experimental.SourceFile
   alias ElixirLS.LanguageServer.Experimental.SourceFile.Conversions
+  alias ElixirLS.LanguageServer.Sequencer
   alias LSP.Types.TextEdit
 
   require Logger
@@ -26,8 +27,9 @@ defmodule ElixirLS.LanguageServer.Experimental.CodeMod.Format do
        when is_binary(project_path_or_uri) do
     project_path = Conversions.ensure_path(project_path_or_uri)
 
+    Logger.info("Calling ElixirLS.LanguageServer.Sequencer.experimental_formatter_for(uri_or_path) from ElixirLS.LanguageServer.Experimental.CodeMod.Format.do_format(...)")
     with :ok <- check_current_directory(document, project_path),
-         {:ok, formatter, options} <- formatter_for(document.path),
+         {:ok, formatter, options} <- Sequencer.experimental_formatter_for(document.path),
          :ok <-
            check_inputs_apply(document, project_path, Keyword.get(options, :inputs)) do
       document
@@ -46,7 +48,8 @@ defmodule ElixirLS.LanguageServer.Experimental.CodeMod.Format do
 
   @spec formatter_for(String.t()) ::
           {:ok, formatter_function, keyword()} | {:error, :no_formatter_available}
-  defp formatter_for(uri_or_path) do
+  def formatter_for(uri_or_path) do
+    Logger.info("Called ElixirLS.LanguageServer.Experimental.CodeMod.Format.formatter_for(uri_or_path)")
     path = Conversions.ensure_path(uri_or_path)
 
     try do
